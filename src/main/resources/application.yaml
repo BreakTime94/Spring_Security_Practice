@@ -2,8 +2,11 @@ spring:
   config:
     import:
       - optional:classpath:secret/db.yml
+      - optional:classpath:secret/application-oauth.yaml
   application:
     name: club
+  profiles:
+    include: oauth
 
   jpa:
     hibernate:
@@ -20,3 +23,4 @@ logging:
   level:
     org.springframework.security.web: trace
     com.climbjava: debug
+

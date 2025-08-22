@@ -23,7 +23,7 @@ public class ClubMember extends BaseEntity {
 
   private String name;
 
-  private Boolean fromSocial;
+  private boolean fromSocial;
 
   @ElementCollection(fetch = FetchType.LAZY)
   @Builder.Default

@@ -3,15 +3,18 @@ package com.climbjava.club.security;
 import com.climbjava.club.entity.ClubMember;
 import com.climbjava.club.entity.ClubMemberRole;
 import com.climbjava.club.repository.ClubMemberRepository;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @SpringBootTest
+@Log4j2
 public class ClubMemberTests {
   @Autowired
   private ClubMemberRepository repository;
@@ -46,4 +49,26 @@ public class ClubMemberTests {
       repository.save(member);
     });
   }
+
+  @Test
+  public void testRead() {
+
+    Optional<ClubMember> result = repository.findByEmail("user100@gmail.com", false);
+
+    ClubMember clubMember = result.get();
+
+    log.info(clubMember);
+  }
+
+  @Test
+  public void testRead2() {
+
+    Optional<ClubMember> result = repository.findByEmailAndFromSocial("user100@gmail.com", false);
+
+    ClubMember clubMember = result.get();
+
+    log.info(clubMember);
+
+  }
+
 }
