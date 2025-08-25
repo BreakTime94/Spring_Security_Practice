@@ -7,7 +7,7 @@
 - spring security 최초 시작 
 - Club Entity, 기초 Repository, 기본 dummydata 작성 
 - 기본 Spring Config 및 기본 thymeleaf 페이지 작성
-- 
+
 ### 📅 250822 
 - Repository를 활용한 기초 쿼리 메서드 작성(findByEmail) 등 
 - clubAuthMemberDTO class 생성, security <-> dto 관계 성립
@@ -15,3 +15,8 @@
 - SecurityConfig 수정, OAuth 로그인 유저 DB주입(기본 pw 적용)
 - 인증 성공후 처리 과정을 다룬 LoginSuccessHandler 작성 및 관련 Social 로그인 시 modify 페이지 이동(프론트 페이지 미구현)
 
+### 📅 250825
+- Note 등록 관련 Service 코드 작성
+- Note RestController 작성(비동기 처리 방식), PostMan 활용 적용 테스트
+- ApiCheckFilter, ApiLoginFilter를 통한 Filter 처리 순서 조정
+- JWT 토큰 적용 준비
