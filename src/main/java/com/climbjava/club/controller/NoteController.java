@@ -1,6 +1,8 @@
 package com.climbjava.club.controller;
 import com.climbjava.club.dto.NoteDTO;
 import com.climbjava.club.service.NoteService;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -31,8 +33,9 @@ public class NoteController {
   }
 
   @GetMapping(value = "all", produces =  MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<NoteDTO>> getAll(@RequestParam("email") String writerEmail) {
-    log.info(writerEmail);
+  public ResponseEntity<List<NoteDTO>> getAll(@RequestParam("email") String writerEmail, HttpSession httpSession) {
+    String email = (String) httpSession.getAttribute("email");
+    log.info(email);
     service.getAllWithWriter(writerEmail);
 
     return ResponseEntity.ok(service.getAllWithWriter(writerEmail));

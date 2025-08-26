@@ -3,6 +3,7 @@ package com.climbjava.club.config;
 import com.climbjava.club.security.filter.ApiCheckFilter;
 import com.climbjava.club.security.filter.ApiLoginFilter;
 import com.climbjava.club.security.handler.ClubLoginSuccessHandler;
+import com.climbjava.club.security.util.JWTUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,11 @@ public class SecurityConfig {
 
   @Bean
   public ApiCheckFilter apiCheckFilter() {
-    return new ApiCheckFilter("/notes/**/*");
+    return new ApiCheckFilter("/notes/**/*", jwtUtil());
   }
+
+  @Bean
+  public JWTUtil jwtUtil() {return new JWTUtil();}
 
 //  @Bean
 //  public InMemoryUserDetailsManager userDetailService() {
@@ -53,9 +57,19 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //ApiLoginFilter 등록 사전준비
+    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+    AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
+    http.authenticationManager(authenticationManager);
+
+    //ApiLoginFilter 등록
+    ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login", jwtUtil());
+    apiLoginFilter.setAuthenticationManager(authenticationManager);
+
     http.csrf(c -> c.disable())
             .authorizeHttpRequests((auth) -> {
-              auth.requestMatchers("sample/all", "/notes/**").permitAll() // 모든 사람 진입 가능
+              auth.requestMatchers("sample/all", "/notes/**", "/api/login/**").permitAll() // 모든 사람 진입 가능
               .requestMatchers("sample/member").hasRole("USER")
               .requestMatchers("sample/admin").hasRole("ADMIN") // Admin만 진입 가능
               .requestMatchers("/member/modify", "/member/modify/**").hasRole("USER")
@@ -71,15 +85,7 @@ public class SecurityConfig {
             //Filter의 순서 바꾸기?
             http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    //ApiLoginFilter 등록 사전준비
-    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-    AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
-    http.authenticationManager(authenticationManager);
-
-    //ApiLoginFilter 등록
-    ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login");
-    apiLoginFilter.setAuthenticationManager(authenticationManager);
 
     http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
 

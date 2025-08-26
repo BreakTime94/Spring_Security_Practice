@@ -1,5 +1,7 @@
 package com.climbjava.club.security.filter;
 
+import com.climbjava.club.security.dto.ClubAuthMemberDTO;
+import com.climbjava.club.security.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +22,11 @@ import java.io.PrintWriter;
 @Log4j2
 public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-  public ApiLoginFilter(String defaultFilterProcessesUrl) {
+  private JWTUtil jwtUtil;
+
+  public ApiLoginFilter(String defaultFilterProcessesUrl, JWTUtil jwtUtil) {
     super(defaultFilterProcessesUrl);
+    this.jwtUtil = jwtUtil;
   }
 
   @Override
@@ -42,14 +47,26 @@ public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
     log.info("========================");
     log.info("ApiLoginFilter에서 성공적으로 인증을 완료했다능");
 
-    //SecurityContext 생성/설정
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authResult);
-    SecurityContextHolder.setContext(context);
+//    //SecurityContext 생성/설정
+//    SecurityContext context = SecurityContextHolder.createEmptyContext();
+//    context.setAuthentication(authResult);
+//    SecurityContextHolder.setContext(context);
+//
+//    //이거를 session에 저장하여야 한다.
+//    request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+//    response.sendRedirect("/");
 
-    //이거를 session에 저장하여야 한다.
-    request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-    response.sendRedirect("/");
+    String email = ((ClubAuthMemberDTO)authResult.getPrincipal()).getUsername();
+
+    String token = null;
+    try{
+      token = jwtUtil.generateToken(email);
+      response.setContentType("text/plain"); //Token은 String 데이터입니다.
+      response.getOutputStream().write(token.getBytes());
+    } catch (Exception e){
+      e.printStackTrace();
+    }
+
   }
 
   @Override

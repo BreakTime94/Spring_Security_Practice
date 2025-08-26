@@ -1,5 +1,6 @@
 package com.climbjava.club.security.filter;
 
+import com.climbjava.club.security.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -20,10 +21,12 @@ public class ApiCheckFilter extends OncePerRequestFilter {
 
   private AntPathMatcher antPathMatcher;
   private String pattern;
+  private JWTUtil jwtUtil;
 
-  public ApiCheckFilter(String pattern) {
+  public ApiCheckFilter(String pattern, JWTUtil jwtUtil) {
     this.antPathMatcher = new AntPathMatcher();
     this.pattern = pattern;
+    this.jwtUtil = jwtUtil;
   }
 
   @Override
@@ -64,14 +67,25 @@ public class ApiCheckFilter extends OncePerRequestFilter {
   private boolean checkAuthHeader(HttpServletRequest request) {
     boolean checkResult = false;
     String authHeader = request.getHeader("Authorization");
-    if(StringUtils.hasText(authHeader)){
-      log.info("Authorization exist(권한 있냐능) : " + authHeader);
-      if(authHeader.equals("12345678")){
-        log.info("짜샤 축하한다. AuthHeader 일치해");
-        checkResult = true;
+//    if(StringUtils.hasText(authHeader)){
+//      log.info("Authorization exist(권한 있냐능) : " + authHeader);
+//      if(authHeader.equals("12345678")){
+//        log.info("짜샤 축하한다. AuthHeader 일치해");
+//        checkResult = true;
+//      }
+//    }
+//    log.info("AuthHeader 안 일치하는데 너무 실망하지는 마");
+    if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
+      log.info("이것이 authHeader다 이 말이야 : {}", authHeader);
+
+      try {
+        String email = jwtUtil.validateAndExtract(authHeader.substring(7));
+        log.info("올 유효한 이메일 추출함 {}", email);
+        checkResult =!email.isEmpty();
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     }
-    log.info("AuthHeader 안 일치하는데 너무 실망하지는 마");
     return checkResult;
   }
 
