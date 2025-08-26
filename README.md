@@ -20,3 +20,10 @@
 - Note RestController 작성(비동기 처리 방식), PostMan 활용 적용 테스트
 - ApiCheckFilter, ApiLoginFilter를 통한 Filter 처리 순서 조정
 - JWT 토큰 적용 준비
+
+### 📅 250826
+- JWT 토큰 기초 적용
+- CORS Filter(Custom Filter) 적용
+- PostMan 활용 (api/login 적용 및 JWT토큰 발급 체크, CORS Filter 적용 체크(요청 메서드 방식, Header 내 Authentication 적용여부 등 활용)
+- CORS Filter를 적용한 간단 ReactComponent 활용 연습 중
+
