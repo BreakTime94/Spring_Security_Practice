@@ -27,3 +27,6 @@
 - PostMan 활용 (api/login 적용 및 JWT토큰 발급 체크, CORS Filter 적용 체크(요청 메서드 방식, Header 내 Authentication 적용여부 등 활용)
 - CORS Filter를 적용한 간단 ReactComponent 활용 연습 중
 
+### 📅 250827
+- Security Config 및 기타 filter 다듬기
+
