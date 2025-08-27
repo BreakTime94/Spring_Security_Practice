@@ -3,6 +3,7 @@ package com.climbjava.club.config;
 import com.climbjava.club.security.filter.ApiCheckFilter;
 import com.climbjava.club.security.filter.ApiLoginFilter;
 import com.climbjava.club.security.handler.ClubLoginSuccessHandler;
+import com.climbjava.club.security.service.ClubUserDetailService;
 import com.climbjava.club.security.util.JWTUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -24,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Log4j2
 public class SecurityConfig {
 
@@ -44,6 +47,11 @@ public class SecurityConfig {
 
   @Bean
   public JWTUtil jwtUtil() {return new JWTUtil();}
+
+//  @Bean
+//  public ClubUserDetailService clubUserDetailService() {
+//    return new ClubUserDetailService();
+//  }
 
 //  @Bean
 //  public InMemoryUserDetailsManager userDetailService() {

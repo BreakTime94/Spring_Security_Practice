@@ -5,6 +5,7 @@ import com.climbjava.club.entity.Note;
 import com.climbjava.club.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class NoteServiceImpl implements NoteService {
   }
 
   @Override
+  @PostAuthorize("returnObject.writerEmail == authentication.principal")
   public NoteDTO get(Long num) {
     return entityToDto(repository.findById(num).orElseThrow(() -> new RuntimeException("그런거 없음 ㅋ")));
   }

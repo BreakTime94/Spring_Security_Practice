@@ -37,7 +37,7 @@ public class NoteController {
     String email = (String) httpSession.getAttribute("email");
     log.info(email);
     service.getAllWithWriter(writerEmail);
-
+    
     return ResponseEntity.ok(service.getAllWithWriter(writerEmail));
   }
 

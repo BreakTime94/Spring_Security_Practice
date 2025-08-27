@@ -9,12 +9,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 @Log4j2
 public class ApiCheckFilter extends OncePerRequestFilter {
@@ -79,9 +83,13 @@ public class ApiCheckFilter extends OncePerRequestFilter {
       log.info("이것이 authHeader다 이 말이야 : {}", authHeader);
 
       try {
-        String email = jwtUtil.validateAndExtract(authHeader.substring(7));
+        String email = jwtUtil.validateAndExtract(authHeader.substring("Bearer ".length()));
         log.info("올 유효한 이메일 추출함 {}", email);
         checkResult =!email.isEmpty();
+        if(checkResult){
+          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }

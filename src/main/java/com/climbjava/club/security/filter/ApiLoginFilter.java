@@ -58,6 +58,7 @@ public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     String email = ((ClubAuthMemberDTO)authResult.getPrincipal()).getUsername();
 
+    log.info(email);
     String token = null;
     try{
       token = jwtUtil.generateToken(email);
