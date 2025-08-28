@@ -26,7 +26,7 @@ public class NoteServiceImpl implements NoteService {
   }
 
   @Override
-  @PostAuthorize("returnObject.writerEmail == authentication.principal")
+  @PostAuthorize("returnObject.writerEmail == authentication.principal.email")
   public NoteDTO get(Long num) {
     return entityToDto(repository.findById(num).orElseThrow(() -> new RuntimeException("그런거 없음 ㅋ")));
   }

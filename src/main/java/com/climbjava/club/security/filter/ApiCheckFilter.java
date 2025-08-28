@@ -1,5 +1,6 @@
 package com.climbjava.club.security.filter;
 
+import com.climbjava.club.security.service.ClubUserDetailService;
 import com.climbjava.club.security.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,9 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,6 +31,9 @@ public class ApiCheckFilter extends OncePerRequestFilter {
   private AntPathMatcher antPathMatcher;
   private String pattern;
   private JWTUtil jwtUtil;
+
+  @Autowired
+  private ClubUserDetailService clubUserDetailService;
 
   public ApiCheckFilter(String pattern, JWTUtil jwtUtil) {
     this.antPathMatcher = new AntPathMatcher();
@@ -87,7 +95,16 @@ public class ApiCheckFilter extends OncePerRequestFilter {
         log.info("올 유효한 이메일 추출함 {}", email);
         checkResult =!email.isEmpty();
         if(checkResult){
-          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+          //jwttoken에 저장된 id(email, username) 정보를 가지고 인증 및 인가내용을
+          // securityContextHolder에 구성
+          // 인증된 정보가 userDetails 객체에 담김
+          UserDetails userDetails = clubUserDetailService.loadUserByUsername(email);
+          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+
+          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+          //SecurityContextHolder
           SecurityContextHolder.getContext().setAuthentication(authentication);
         }
       } catch (Exception e) {

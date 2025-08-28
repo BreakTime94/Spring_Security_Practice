@@ -23,7 +23,7 @@ public class ClubUserDetailService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    log.info("ClubUserDetailService.loadUserByUsername" + username);
+    log.info("ClubUserDetailService.loadUserByUsername: " + username);
 
     Optional<ClubMember> result = repository.findByEmail(username, false);
 
